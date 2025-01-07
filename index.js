@@ -1,4 +1,3 @@
-// Access environment variables
 const API_KEY = `live_gecybbtg4DMF0IwPFn5AC9xqPKEhz02jvj2EcTPI8lXWit3A16xGC4CDI9V6EYA2`;
 const API_URL = `https://api.thedogapi.com/v1/images/search?limit=12&api_key=${API_KEY}`;
 const GET_BUTTON = document.querySelector('#get_button');
@@ -14,7 +13,7 @@ async function fetchPost() {
   }
 }
 
-// Function to display data in the #results div
+// Display data in the #results div
 function displayResults(data) {
   const results_div = document.querySelector('#results');
   if (Array.isArray(data)) {
@@ -37,18 +36,16 @@ function displayResults(data) {
   }
 }
 
-// Function to demonstrate both GET functionality
 async function runProject() {
   try {
-    console.log('Fetching all posts...');
-    await fetchPost();
-  }
-  catch (error) {
+    console.log('Fetching all posts on load...');
+    const post_data = await fetchPost();
+    displayResults(post_data);
+  } catch (error) {
     console.error('Error in runProject:', error);
   }
 }
 
-// Add event handlers
 if (GET_BUTTON) {
   GET_BUTTON.addEventListener('click', async () => {
     try {
@@ -61,5 +58,4 @@ if (GET_BUTTON) {
   });
 }
 
-// Run the project
 runProject();
