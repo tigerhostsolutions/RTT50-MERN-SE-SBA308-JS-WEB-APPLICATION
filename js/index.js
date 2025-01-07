@@ -2,12 +2,13 @@ import {
   initializePagination,
   getPaginatedData,
   setupPaginationContainer,
-} from 'js/pagination_utils.js';
+} from './pagination_utils.js';
 
-import {displayResults} from 'js/display_results_utils.js';
+import {displayResults} from './display_results_utils.js';
 
 const API_KEY = `live_gecybbtg4DMF0IwPFn5AC9xqPKEhz02jvj2EcTPI8lXWit3A16xGC4CDI9V6EYA2`;
 const API_URL = `https://api.thedogapi.com/v1/images/search?limit=12&api_key=${API_KEY}`;
+const UPLOAD_URL = `https://api.thedogapi.com/v1/images/upload`;
 const GET_BUTTON = document.querySelector('#get_button');
 
 setupPaginationContainer();
@@ -17,11 +18,8 @@ async function fetchPost() {
     const response = await axios.get(API_URL); // axios is globally available
     const data = response.data;
     console.log('Fetched Posts with Names:', data);
-
-    // Initialize pagination with fetched data
-    initializePagination(data);
-    // Display the first page of results
-    displayResults(getPaginatedData(1));
+    initializePagination(data);    // Initialize pagination with fetched data
+    displayResults(getPaginatedData(1));    // Display the first page of results
 
     return data;
   }
@@ -31,55 +29,32 @@ async function fetchPost() {
   }
 }
 
-// async function updatePost(image_id, new_description) {
-//   try {
-//     const response = await axios.put(
-//         `https://api.thedogapi.com/v1/images/${image_id}/description`, {
-//           description: new_description,
-//         }, {
-//           headers: {
-//             'x-api-key': API_KEY, 'Content-Type': 'application/json',
-//           },
-//         });
-//
-//     console.log('Description updated successfully:', response.data);
-//     return response.data;
-//   }
-//   catch (error) {
-//     console.error('Error updating description:', error);
-//     alert(`Failed to update description: ${error.message}`);
-//     return {error: 'Failed to update description'};
-//   }
-// }
-//
-// export function addCardDescription() {
-//   const buttons = document.querySelectorAll('.save-description-btn');
-//
-//   buttons.forEach((button) => {
-//     button.replaceWith(button.cloneNode(true)); // Removes old event listeners
-//   });
-//
-//   buttons.forEach((button) => {
-//     button.addEventListener('click', async () => {
-//       const image_id = button.dataset.image_id;
-//       const input_field = document.querySelector(
-//           `.description-input[data-image-id="${image_id}"]`);
-//
-//       if (input_field) {
-//         const new_description = input_field.value;
-//         const result = await updatePost(image_id, new_description);
-//
-//         if (result.error) {
-//           alert('Failed to update description!');
-//         }
-//         else {
-//           alert('Description updated successfully!');
-//           console.log('Updated Description:', result);
-//         }
-//       }
-//     });
-//   });
-// }
+async function uploadImage(file, description) {
+  try {
+    // Prepare form data
+    const form_data = new FormData();
+    form_data.append('file', file); // The image file
+    if (description) {
+      form_data.append('sub_id', description); // Adding the description as `sub_id`
+    }
+
+    // Make the POST request to upload
+    const response = await axios.post(UPLOAD_URL, form_data, {
+      headers: {
+        'x-api-key': API_KEY,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Image uploaded successfully:', response.data);
+    alert('Image uploaded successfully!');
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    alert(`Failed to upload image: ${error.message}`);
+    return { error: 'Failed to upload image' };
+  }
+}
 
 if (GET_BUTTON) {
   GET_BUTTON.addEventListener('click', async () => {
@@ -92,6 +67,32 @@ if (GET_BUTTON) {
     }
   });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const upload_button = document.querySelector('#upload_button');
+  const image_input = document.querySelector('#image_input');
+  const image_description = document.querySelector('#image_description');
+
+  if (upload_button) {
+    upload_button.addEventListener('click', async () => {
+      // Validate inputs
+      if (!image_input.files.length) {
+        alert('Please select an image to upload.');
+        return;
+      }
+
+      const file = image_input.files[0];
+      const description = image_description.value;
+      const result = await uploadImage(file, description);
+
+      if (!result.error) {
+        console.log('Uploaded Image Response:', result);
+        alert(`Image Uploaded: ID = ${result.id}`);
+        await fetchPost(); // Reload fetched images
+      }
+    });
+  }
+});
 
 async function runProject() {
   try {

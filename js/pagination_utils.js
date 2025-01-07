@@ -1,4 +1,4 @@
-import { displayResults } from 'js/display_results_utils.js';
+import { displayResults } from './display_results_utils.js';
 
 export let current_page = 1; // Current page
 export const items_per_page = 6; // Items per page
