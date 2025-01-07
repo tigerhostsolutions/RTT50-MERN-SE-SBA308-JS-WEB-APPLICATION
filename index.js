@@ -1,12 +1,28 @@
+import {
+  initializePagination,
+  getPaginatedData,
+  setupPaginationContainer,
+} from './pagination_utils.js';
+
+import {displayResults} from './display_results_utils.js';
+
 const API_KEY = `live_gecybbtg4DMF0IwPFn5AC9xqPKEhz02jvj2EcTPI8lXWit3A16xGC4CDI9V6EYA2`;
 const API_URL = `https://api.thedogapi.com/v1/images/search?limit=12&api_key=${API_KEY}`;
 const GET_BUTTON = document.querySelector('#get_button');
+
+setupPaginationContainer();
 
 async function fetchPost() {
   try {
     const response = await axios.get(API_URL); // axios is globally available
     const data = response.data;
     console.log('Fetched Posts with Names:', data);
+
+    // Initialize pagination with fetched data
+    initializePagination(data);
+    // Display the first page of results
+    displayResults(getPaginatedData(1));
+
     return data;
   }
   catch (error) {
@@ -15,43 +31,55 @@ async function fetchPost() {
   }
 }
 
-// Display data in the #results div
-function displayResults(data) {
-  const results_div = document.querySelector('#results');
-  if (Array.isArray(data)) {
-    results_div.innerHTML = data.map((item, index) => {
-      const dogName = item?.name ||
-          (item?.breeds?.length > 0 ? item.breeds[0]?.name : 'Unknown Dog');
-      const breedGroup = item?.breeds?.[0]?.breed_group || 'N/A';
-      const bredFor = item?.breeds?.[0]?.bred_for || 'N/A';
-      // add description
-      return `
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <img src="${item.url}" class="card-img-top" alt="${dogName}" />
-            <div class="card-body">
-              <h5 class="card-title">${dogName}</h5>
-              <p class="card-text">
-                ${item.breeds.length > 0 ?
-                  `Breed Group: ${breedGroup}<br>
-                   Bred For: ${bredFor}` :
-                  'No additional breed information available.'}
-              </p>
-              
-<!--         add description-->
-<!--         add save button-->
-                     
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-  }
-  else {
-    results_div.innerHTML = `<p class="invalid">Invalid data format.</p>`;
-  }
-  // Add event listeners for the Save buttons
-
-}
+// async function updatePost(image_id, new_description) {
+//   try {
+//     const response = await axios.put(
+//         `https://api.thedogapi.com/v1/images/${image_id}/description`, {
+//           description: new_description,
+//         }, {
+//           headers: {
+//             'x-api-key': API_KEY, 'Content-Type': 'application/json',
+//           },
+//         });
+//
+//     console.log('Description updated successfully:', response.data);
+//     return response.data;
+//   }
+//   catch (error) {
+//     console.error('Error updating description:', error);
+//     alert(`Failed to update description: ${error.message}`);
+//     return {error: 'Failed to update description'};
+//   }
+// }
+//
+// export function addCardDescription() {
+//   const buttons = document.querySelectorAll('.save-description-btn');
+//
+//   buttons.forEach((button) => {
+//     button.replaceWith(button.cloneNode(true)); // Removes old event listeners
+//   });
+//
+//   buttons.forEach((button) => {
+//     button.addEventListener('click', async () => {
+//       const image_id = button.dataset.image_id;
+//       const input_field = document.querySelector(
+//           `.description-input[data-image-id="${image_id}"]`);
+//
+//       if (input_field) {
+//         const new_description = input_field.value;
+//         const result = await updatePost(image_id, new_description);
+//
+//         if (result.error) {
+//           alert('Failed to update description!');
+//         }
+//         else {
+//           alert('Description updated successfully!');
+//           console.log('Updated Description:', result);
+//         }
+//       }
+//     });
+//   });
+// }
 
 if (GET_BUTTON) {
   GET_BUTTON.addEventListener('click', async () => {
@@ -64,6 +92,7 @@ if (GET_BUTTON) {
     }
   });
 }
+
 async function runProject() {
   try {
     console.log('Fetching all posts on load...');
