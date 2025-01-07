@@ -1,4 +1,8 @@
-body {
-    width: 90%;
-    margin: auto;
+.card-img-top {
+    width: 100%; /* Responsive width */
+    height: 400px; /* Fixed height */
+    object-fit: cover; /* Crop image at the center to fit the square */
+}
+.invalid {
+    color: red;
 }
