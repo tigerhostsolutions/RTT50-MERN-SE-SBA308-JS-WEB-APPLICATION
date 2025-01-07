@@ -1,0 +1,26 @@
+{
+  "name": "rtt50-mern-se-sba308-js-web-application",
+  "version": "1.0.0",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tigerhostsolutions/RTT50-MERN-SE-SBA308-JS-WEB-APPLICATION.git"
+  },
+  "author": "jonte grasty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tigerhostsolutions/RTT50-MERN-SE-SBA308-JS-WEB-APPLICATION/issues"
+  },
+  "homepage": "https://github.com/tigerhostsolutions/RTT50-MERN-SE-SBA308-JS-WEB-APPLICATION#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "dotenv-webpack": "^8.1.0"
+  }
+}
