@@ -2,9 +2,9 @@ import {
   initializePagination,
   getPaginatedData,
   setupPaginationContainer,
-} from './pagination_utils.js';
+} from 'js/pagination_utils.js';
 
-import {displayResults} from './display_results_utils.js';
+import {displayResults} from 'js/display_results_utils.js';
 
 const API_KEY = `live_gecybbtg4DMF0IwPFn5AC9xqPKEhz02jvj2EcTPI8lXWit3A16xGC4CDI9V6EYA2`;
 const API_URL = `https://api.thedogapi.com/v1/images/search?limit=12&api_key=${API_KEY}`;
